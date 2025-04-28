@@ -9,7 +9,6 @@
   <script src="https://cdn.jsdelivr.net/npm/focus-visible@5.0.2/dist/focus-visible.js" defer></script>
 
   <style>
-    /* Your CSS (same) */
     h5 {
       text-align: center;
       margin-top: -5px;
@@ -56,111 +55,153 @@
       }
     }
   </style>
+
+  <!-- Microsoft Clarity -->
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
         t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "rb8f137aiv");
-</script>
+  </script>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-11NF2EFQ2Q"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-11NF2EFQ2Q');
+  </script>
 </head>
 
 <body>
 
-  <div id="card">
-    <!-- Model Viewer -->
-    <model-viewer 
-      src="Maastro.glb" 
-      ios-src="Maastro.usdz" 
-      ar 
-      ar-modes="webxr scene-viewer quick-look" 
-      camera-controls 
-      poster="loading.gif"  
-      shadow-intensity="0.88" 
-      shadow-softness="1" 
-      exposure="1">
+<div id="card">
+  <!-- Model Viewer -->
+  <model-viewer 
+    id="model"
+    src="Maastro.glb" 
+    ios-src="Maastro.usdz" 
+    ar 
+    ar-modes="webxr scene-viewer quick-look" 
+    camera-controls 
+    poster="loading.gif"  
+    shadow-intensity="0.88" 
+    shadow-softness="1" 
+    exposure="1">
 
-      <div class="progress-bar hide" slot="progress-bar">
-        <div class="update-bar"></div>
-      </div>
+    <div class="progress-bar hide" slot="progress-bar">
+      <div class="update-bar"></div>
+    </div>
 
-      <!-- Logo Section -->
-      <div id="button" style="display:flex; justify-content: space-between;">
-        <img src="4.png" style="width:100px; padding-left:10px;"/>
-        <img src="iitname.png" style="width:100px; padding-right:10px;"/>
-      </div>
+    <!-- Logo Section -->
+    <div id="button" style="display:flex; justify-content: space-between;">
+      <img src="4.png" style="width:100px; padding-left:10px;"/>
+      <img src="iitname.png" style="width:100px; padding-right:10px;"/>
+    </div>
 
-      <!-- AR Button -->
-      <button slot="ar-button" id="ar-button">
-        View in 4D
-      </button>
+    <!-- AR Button -->
+    <button slot="ar-button" id="ar-button">
+      View in 4D
+    </button>
 
-      <!-- AR Prompt -->
-      <div id="ar-prompt">
-        <img src="ar_hand_prompt.png">
-      </div>
+    <!-- AR Prompt -->
+    <div id="ar-prompt">
+      <img src="ar_hand_prompt.png">
+    </div>
 
-    </model-viewer>
+  </model-viewer>
 
-    <!-- Attribution Links -->
-    <section class="attributiontwo">
-      <span>
-        <a href="https://varian.widen.net/s/wwyx9dru1f/brachy_catalog_rad10536a_september2019">
-          <img src="Brochure_1.png" class="icon">
-        </a>
-        <a href="https://vimeo.com/1059697212">
-          <img src="Video_1.png" class="icon">
-        </a>
-        <a href="https://www.varian.com/products/brachytherapy/afterloaders-and-applicators">
-          <img src="web_1.png" class="icon">
-        </a>
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfRaempuDSCvL9Adi-AAdqqdlyBzLo7s20bddYnmd1HOyapxg/viewform?usp=sf_link">
-          <img src="form_1.png" class="icon">
-        </a>
-      </span>
-    </section>
+  <!-- Attribution Links -->
+  <section class="attributiontwo">
+    <span>
+      <a href="https://varian.widen.net/s/wwyx9dru1f/brachy_catalog_rad10536a_september2019">
+        <img src="Brochure_1.png" class="icon">
+      </a>
+      <a href="https://vimeo.com/1059697212">
+        <img src="Video_1.png" class="icon">
+      </a>
+      <a href="https://www.varian.com/products/brachytherapy/afterloaders-and-applicators">
+        <img src="web_1.png" class="icon">
+      </a>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSfRaempuDSCvL9Adi-AAdqqdlyBzLo7s20bddYnmd1HOyapxg/viewform?usp=sf_link">
+        <img src="form_1.png" class="icon">
+      </a>
+    </span>
+  </section>
 
-  </div>
+</div>
 
-  <!-- Background Audio -->
-  <audio id="bg-music" src="BG.mp3" muted loop></audio>
+<!-- Background Music -->
+<audio id="bg-music" src="BG.mp3" muted loop></audio>
 
-  <!-- JavaScript -->
-  <script src="script.js"></script>
-  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
+<!-- JavaScript Files -->
+<script src="script.js"></script>
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
 
-  <script>
-    const bgMusic = document.getElementById('bg-music');
-
-    document.addEventListener('DOMContentLoaded', () => {
-      // Try autoplay immediately (some browsers allow muted autoplay)
-      bgMusic.play().catch((error) => {
-        console.log('Autoplay blocked initially. Waiting for user interaction.');
-      });
-
-      // Unlock audio on first user interaction
-      function enableAudio() {
-        bgMusic.muted = false;
-        bgMusic.play().catch((error) => {
-          console.log('Play attempt after user interaction failed:', error);
-        });
-
-        document.removeEventListener('click', enableAudio);
-        document.removeEventListener('touchstart', enableAudio);
-      }
-
-      document.addEventListener('click', enableAudio);
-      document.addEventListener('touchstart', enableAudio);
-    });
-  </script>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-11NF2EFQ2Q"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  const bgMusic = document.getElementById('bg-music');
+  const modelViewer = document.getElementById('model');
 
-  gtag('config', 'G-11NF2EFQ2Q');
+  document.addEventListener('DOMContentLoaded', () => {
+    bgMusic.play().catch((error) => {
+      console.log('Autoplay blocked initially. Waiting for user interaction.');
+    });
+
+    function enableAudio() {
+      bgMusic.muted = false;
+      bgMusic.play().catch((error) => {
+        console.log('Play attempt after user interaction failed:', error);
+      });
+      document.removeEventListener('click', enableAudio);
+      document.removeEventListener('touchstart', enableAudio);
+    }
+
+    document.addEventListener('click', enableAudio);
+    document.addEventListener('touchstart', enableAudio);
+  });
+
+  // Track Model Interactions
+
+  modelViewer.addEventListener('camera-change', () => {
+    gtag('event', 'model_camera_changed', {
+      event_category: '3D Model',
+      event_label: 'User moved/rotated/zoomed model'
+    });
+  });
+
+  modelViewer.addEventListener('click', (event) => {
+    gtag('event', 'model_clicked', {
+      event_category: '3D Model',
+      event_label: 'User clicked on model',
+      value: 1
+    });
+  });
+
+  modelViewer.addEventListener('touchstart', (event) => {
+    gtag('event', 'model_touched', {
+      event_category: '3D Model',
+      event_label: 'User touched model',
+      value: 1
+    });
+  });
+
+  modelViewer.addEventListener('ar-status', (event) => {
+    if (event.detail.status === 'session-started') {
+      gtag('event', 'ar_session_started', {
+        event_category: 'AR',
+        event_label: 'AR View started'
+      });
+    }
+    if (event.detail.status === 'session-ended') {
+      gtag('event', 'ar_session_ended', {
+        event_category: 'AR',
+        event_label: 'AR View ended'
+      });
+    }
+  });
+
 </script>
 
 </body>
