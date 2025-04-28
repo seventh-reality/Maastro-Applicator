@@ -1,129 +1,151 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <title>Varian</title>
-    <meta charset="utf-8">
-    <meta name="description" content="<model-viewer> template">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link type="text/css" href="./styles.css" rel="stylesheet"/>
-    <script src="https://cdn.jsdelivr.net/npm/focus-visible@5.0.2/dist/focus-visible.js" defer></script>
-    <style>
-        h5 {
-            text-align: center;
-            margin-top: -5px;
-            font-size: 9px;
-            color: #636363; /* Improves visibility */
-        }
+<head>
+  <title>Varian</title>
+  <meta charset="utf-8">
+  <meta name="description" content="<model-viewer> template">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link type="text/css" href="./styles.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/focus-visible@5.0.2/dist/focus-visible.js" defer></script>
 
-        .attributiontwo {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 0;
-        }
+  <style>
+    /* Your CSS (same) */
+    h5 {
+      text-align: center;
+      margin-top: -5px;
+      font-size: 9px;
+      color: #636363;
+    }
 
-        .attributiontwo span {
-            display: flex;
-            flex-wrap: nowrap;
-            justify-content: center;
-        }
+    .attributiontwo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 0;
+    }
 
-        .attributiontwo a {
-            margin: 15px;
-            text-decoration: none; /* Removes underline */
-           -webkit-tap-highlight-color: transparent; /* Removes blue highlight */
-        }
+    .attributiontwo span {
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: center;
+    }
 
-        .icon {
-            width: 43px;
-            height: 43px;            
-        }
-        .icon:hover {
-            transform: scale(1.1);         
-        }
+    .attributiontwo a {
+      margin: 15px;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            .attributiontwo {
-                padding: 15px;
-            }
-            .icon {
-                width: 43px;
-                height: 43px;
-            }
-        }
-    </style>
-	 
-  </head>
-  
-  <body>
+    .icon {
+      width: 43px;
+      height: 43px;
+    }
 
-    <div id="card">
-      <model-viewer src="Maastro.glb" ios-src="Maastro.usdz" ar ar-modes="webxr scene-viewer quick-look" camera-controls poster="loading.gif" shadow-intensity="0.88" shadow-softness="1" exposure="1">
-        
-        <div class="progress-bar hide" slot="progress-bar">
-          <div class="update-bar"></div>
-        </div>
+    .icon:hover {
+      transform: scale(1.1);
+    }
 
-        <!-- Button Area -->
-        <div id="button" style="display: flex; justify-content: space-between;">
-          <img src="4.png" style="width: 100px; padding-left: 10px;"/>
-          <img src="iitname.png" style="width: 100px; padding-right: 10px;"/>
-        </div>
+    @media (max-width: 600px) {
+      .attributiontwo {
+        padding: 15px;
+      }
+      .icon {
+        width: 43px;
+        height: 43px;
+      }
+    }
+  </style>
+</head>
 
-        <button slot="ar-button" id="ar-button">
-          View in 4D
-        </button>
+<body>
 
-        <div id="ar-prompt">
-          <img src="ar_hand_prompt.png">
-        </div>
+  <div id="card">
+    <!-- Model Viewer -->
+    <model-viewer 
+      src="Maastro.glb" 
+      ios-src="Maastro.usdz" 
+      ar 
+      ar-modes="webxr scene-viewer quick-look" 
+      camera-controls 
+      poster="loading.gif"  
+      shadow-intensity="0.88" 
+      shadow-softness="1" 
+      exposure="1">
 
-      </model-viewer> 
+      <div class="progress-bar hide" slot="progress-bar">
+        <div class="update-bar"></div>
+      </div>
 
-      <!-- Attribution and Links -->
-      <section class="attributiontwo">
-        <span>
-          <a href="https://varian.widen.net/s/wwyx9dru1f/brachy_catalog_rad10536a_september2019">
-            <img src="Brochure_1.png" class="icon">
-          </a>
-          <a href="https://www.youtube.com/watch?v=rZ7_4vUH15k">
-            <img src="Video_1.png" class="icon">
-          </a>
-          <a href="https://www.varian.com/products/brachytherapy/afterloaders-and-applicators">
-            <img src="web_1.png" class="icon">
-          </a>  
-          <a href="https://docs.google.com/forms/d/e/1FAIpQLSfRaempuDSCvL9Adi-AAdqqdlyBzLo7s20bddYnmd1HOyapxg/viewform?usp=sf_link">
-            <img src="form_1.png" class="icon">
-          </a>
-        </span>
-      </section>
-    </div>
+      <!-- Logo Section -->
+      <div id="button" style="display:flex; justify-content: space-between;">
+        <img src="4.png" style="width:100px; padding-left:10px;"/>
+        <img src="iitname.png" style="width:100px; padding-right:10px;"/>
+      </div>
 
-    <!-- Background Audio -->
-    <audio id="bg-music" src="BG.mp3" loop></audio>
+      <!-- AR Button -->
+      <button slot="ar-button" id="ar-button">
+        View in 4D
+      </button>
 
-    <script src="script.js"></script>
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
+      <!-- AR Prompt -->
+      <div id="ar-prompt">
+        <img src="ar_hand_prompt.png">
+      </div>
 
-    <!-- Script to autoplay audio after first touch -->
-    <script>
-      const bgMusic = document.getElementById('bg-music');
+    </model-viewer>
 
-      // Function to play audio after user interacts
+    <!-- Attribution Links -->
+    <section class="attributiontwo">
+      <span>
+        <a href="https://varian.widen.net/s/wwyx9dru1f/brachy_catalog_rad10536a_september2019">
+          <img src="Brochure_1.png" class="icon">
+        </a>
+        <a href="https://www.youtube.com/watch?v=rZ7_4vUH15k">
+          <img src="Video_1.png" class="icon">
+        </a>
+        <a href="https://www.varian.com/products/brachytherapy/afterloaders-and-applicators">
+          <img src="web_1.png" class="icon">
+        </a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfRaempuDSCvL9Adi-AAdqqdlyBzLo7s20bddYnmd1HOyapxg/viewform?usp=sf_link">
+          <img src="form_1.png" class="icon">
+        </a>
+      </span>
+    </section>
+
+  </div>
+
+  <!-- Background Audio -->
+  <audio id="bg-music" src="BG.mp3" muted loop></audio>
+
+  <!-- JavaScript -->
+  <script src="script.js"></script>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
+
+  <script>
+    const bgMusic = document.getElementById('bg-music');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Try autoplay immediately (some browsers allow muted autoplay)
+      bgMusic.play().catch((error) => {
+        console.log('Autoplay blocked initially. Waiting for user interaction.');
+      });
+
+      // Unlock audio on first user interaction
       function enableAudio() {
+        bgMusic.muted = false;
         bgMusic.play().catch((error) => {
-          console.log('Audio play was prevented:', error);
+          console.log('Play attempt after user interaction failed:', error);
         });
-        document.body.removeEventListener('click', enableAudio);
-        document.body.removeEventListener('touchstart', enableAudio);
+
+        document.removeEventListener('click', enableAudio);
+        document.removeEventListener('touchstart', enableAudio);
       }
 
-      // Listen for user interaction
-      document.body.addEventListener('click', enableAudio);
-      document.body.addEventListener('touchstart', enableAudio);
-    </script>
+      document.addEventListener('click', enableAudio);
+      document.addEventListener('touchstart', enableAudio);
+    });
+  </script>
 
-  </body>
+</body>
 </html>
