@@ -15,7 +15,6 @@
       font-size: 9px;
       color: #636363;
     }
-
     .attributiontwo {
       display: flex;
       flex-direction: column;
@@ -23,28 +22,23 @@
       justify-content: center;
       padding: 10px 0;
     }
-
     .attributiontwo span {
       display: flex;
       flex-wrap: nowrap;
       justify-content: center;
     }
-
     .attributiontwo a {
       margin: 15px;
       text-decoration: none;
       -webkit-tap-highlight-color: transparent;
     }
-
     .icon {
       width: 43px;
       height: 43px;
     }
-
     .icon:hover {
       transform: scale(1.1);
     }
-
     @media (max-width: 600px) {
       .attributiontwo {
         padding: 15px;
@@ -143,6 +137,11 @@
 <script>
   const bgMusic = document.getElementById('bg-music');
   const modelViewer = document.getElementById('model');
+  const arButton = document.getElementById('ar-button');
+
+  let playCount = 0;
+  let maxPlays = 2;
+  let arMusicMode = false;
 
   document.addEventListener('DOMContentLoaded', () => {
     bgMusic.play().catch((error) => {
@@ -162,8 +161,34 @@
     document.addEventListener('touchstart', enableAudio);
   });
 
-  // Track Model Interactions
+  // When AR button clicked, play only 2 times
+  arButton.addEventListener('click', () => {
+    console.log("AR Button clicked, playing music only twice.");
 
+    if (!arMusicMode) {
+      arMusicMode = true;
+      playCount = 0;
+      bgMusic.loop = false;
+      bgMusic.currentTime = 0;
+      bgMusic.play();
+    }
+  });
+
+  bgMusic.addEventListener('ended', () => {
+    if (arMusicMode) {
+      playCount++;
+      if (playCount < maxPlays) {
+        bgMusic.currentTime = 0;
+        bgMusic.play();
+      } else {
+        console.log("Played twice. Stopping music.");
+        // Stop after 2 plays
+        arMusicMode = false;
+      }
+    }
+  });
+
+  // Track Model Interactions
   modelViewer.addEventListener('camera-change', () => {
     gtag('event', 'model_camera_changed', {
       event_category: '3D Model',
@@ -201,7 +226,6 @@
       });
     }
   });
-
 </script>
 
 </body>
