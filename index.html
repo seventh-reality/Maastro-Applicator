@@ -105,50 +105,29 @@
   const modelViewer = document.getElementById('model');
   const arButton = document.getElementById('ar-button');
 
-  let playCount = 0;
-  let arMusicMode = false;
-
   document.addEventListener('DOMContentLoaded', () => {
-    bgMusic.loop = false; // Ensure no looping on load
-    bgMusic.play().catch((error) => {
-      console.log('Autoplay blocked. Waiting for user interaction.');
-    });
-
-    function enableAudio() {
-      bgMusic.muted = false;
-      bgMusic.play().catch((error) => {
-        console.log('Play attempt after user interaction failed:', error);
-      });
-      document.removeEventListener('click', enableAudio);
-      document.removeEventListener('touchstart', enableAudio);
-    }
-
-    document.addEventListener('click', enableAudio);
-    document.addEventListener('touchstart', enableAudio);
+    bgMusic.loop = false; // Ensure no looping
+    bgMusic.muted = true; // Start muted
   });
+
+  function enableAudio() {
+    bgMusic.muted = false;
+    document.removeEventListener('click', enableAudio);
+    document.removeEventListener('touchstart', enableAudio);
+  }
+
+  document.addEventListener('click', enableAudio);
+  document.addEventListener('touchstart', enableAudio);
 
   arButton.addEventListener('click', () => {
-    console.log("AR Button clicked, setting to play 2 times.");
-    arMusicMode = true;
-    playCount = 0;
+    console.log("AR Button clicked, playing BG.mp3 once.");
     bgMusic.currentTime = 0;
-    bgMusic.play();
+    bgMusic.play().catch((error) => {
+      console.log('Play failed after AR button click:', error);
+    });
   });
 
-  bgMusic.addEventListener('ended', () => {
-    if (arMusicMode) {
-      playCount++;
-      if (playCount < 2) {
-        bgMusic.currentTime = 0;
-        bgMusic.play();
-      } else {
-        console.log("Played twice, stopping.");
-        arMusicMode = false;
-      }
-    }
-  });
-
-  // Track Model Interactions
+  // Model Interaction Tracking
   modelViewer.addEventListener('camera-change', () => {
     gtag('event', 'model_camera_changed', {
       event_category: '3D Model',
@@ -187,6 +166,7 @@
     }
   });
 </script>
+
 
 </body>
 </html>
