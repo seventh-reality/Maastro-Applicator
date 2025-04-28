@@ -9,44 +9,15 @@
   <script src="https://cdn.jsdelivr.net/npm/focus-visible@5.0.2/dist/focus-visible.js" defer></script>
 
   <style>
-    h5 {
-      text-align: center;
-      margin-top: -5px;
-      font-size: 9px;
-      color: #636363;
-    }
-    .attributiontwo {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 10px 0;
-    }
-    .attributiontwo span {
-      display: flex;
-      flex-wrap: nowrap;
-      justify-content: center;
-    }
-    .attributiontwo a {
-      margin: 15px;
-      text-decoration: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .icon {
-      width: 43px;
-      height: 43px;
-    }
-    .icon:hover {
-      transform: scale(1.1);
-    }
+    h5 { text-align: center; margin-top: -5px; font-size: 9px; color: #636363; }
+    .attributiontwo { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 0; }
+    .attributiontwo span { display: flex; flex-wrap: nowrap; justify-content: center; }
+    .attributiontwo a { margin: 15px; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+    .icon { width: 43px; height: 43px; }
+    .icon:hover { transform: scale(1.1); }
     @media (max-width: 600px) {
-      .attributiontwo {
-        padding: 15px;
-      }
-      .icon {
-        width: 43px;
-        height: 43px;
-      }
+      .attributiontwo { padding: 15px; }
+      .icon { width: 43px; height: 43px; }
     }
   </style>
 
@@ -72,7 +43,6 @@
 <body>
 
 <div id="card">
-  <!-- Model Viewer -->
   <model-viewer 
     id="model"
     src="Maastro.glb" 
@@ -89,25 +59,21 @@
       <div class="update-bar"></div>
     </div>
 
-    <!-- Logo Section -->
     <div id="button" style="display:flex; justify-content: space-between;">
       <img src="4.png" style="width:100px; padding-left:10px;"/>
       <img src="iitname.png" style="width:100px; padding-right:10px;"/>
     </div>
 
-    <!-- AR Button -->
     <button slot="ar-button" id="ar-button">
       View in 4D
     </button>
 
-    <!-- AR Prompt -->
     <div id="ar-prompt">
       <img src="ar_hand_prompt.png">
     </div>
 
   </model-viewer>
 
-  <!-- Attribution Links -->
   <section class="attributiontwo">
     <span>
       <a href="https://varian.widen.net/s/wwyx9dru1f/brachy_catalog_rad10536a_september2019">
@@ -128,9 +94,9 @@
 </div>
 
 <!-- Background Music -->
-<audio id="bg-music" src="BG.mp3" muted loop></audio>
+<audio id="bg-music" src="BG.mp3" muted></audio>
 
-<!-- JavaScript Files -->
+<!-- Scripts -->
 <script src="script.js"></script>
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
 
@@ -140,12 +106,12 @@
   const arButton = document.getElementById('ar-button');
 
   let playCount = 0;
-  let maxPlays = 1;
   let arMusicMode = false;
 
   document.addEventListener('DOMContentLoaded', () => {
+    bgMusic.loop = false; // Ensure no looping on load
     bgMusic.play().catch((error) => {
-      console.log('Autoplay blocked initially. Waiting for user interaction.');
+      console.log('Autoplay blocked. Waiting for user interaction.');
     });
 
     function enableAudio() {
@@ -161,28 +127,22 @@
     document.addEventListener('touchstart', enableAudio);
   });
 
-  // When AR button clicked, play only 2 times
   arButton.addEventListener('click', () => {
-    console.log("AR Button clicked, playing music only twice.");
-
-    if (!arMusicMode) {
-      arMusicMode = true;
-      playCount = 0;
-      bgMusic.loop = false;
-      bgMusic.currentTime = 0;
-      bgMusic.play();
-    }
+    console.log("AR Button clicked, setting to play 2 times.");
+    arMusicMode = true;
+    playCount = 0;
+    bgMusic.currentTime = 0;
+    bgMusic.play();
   });
 
   bgMusic.addEventListener('ended', () => {
     if (arMusicMode) {
       playCount++;
-      if (playCount < maxPlays) {
+      if (playCount < 2) {
         bgMusic.currentTime = 0;
         bgMusic.play();
       } else {
-        console.log("Played twice. Stopping music.");
-        // Stop after 2 plays
+        console.log("Played twice, stopping.");
         arMusicMode = false;
       }
     }
