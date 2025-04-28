@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>Varian </title>
+    <title>Varian</title>
     <meta charset="utf-8">
-    <meta name="description" content="&lt;model-viewer&gt; template">
+    <meta name="description" content="<model-viewer> template">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link type="text/css" href="./styles.css" rel="stylesheet"/>
-     <script src="https://cdn.jsdelivr.net/npm/focus-visible@5.0.2/dist/focus-visible.js" defer></script>
-	   <style>
+    <script src="https://cdn.jsdelivr.net/npm/focus-visible@5.0.2/dist/focus-visible.js" defer></script>
+    <style>
         h5 {
             text-align: center;
             margin-top: -5px;
@@ -58,58 +58,72 @@
   </head>
   
   <body>
-    
-    
+
     <div id="card">
-    <!-- <model-viewer> HTML element -->
-    <model-viewer src="Maastro.glb" ios-src="Maastro.usdz" ar ar-modes="webxr scene-viewer quick-look" camera-controls poster="loading.gif"  shadow-intensity="0.88" shadow-softness="1" exposure="1">
-      <div class="progress-bar hide" slot="progress-bar">
+      <model-viewer src="Maastro.glb" ios-src="Maastro.usdz" ar ar-modes="webxr scene-viewer quick-look" camera-controls poster="loading.gif" shadow-intensity="0.88" shadow-softness="1" exposure="1">
+        
+        <div class="progress-bar hide" slot="progress-bar">
           <div class="update-bar"></div>
-      </div>
-      <audio src="BG.mp3" autoplay loop></audio>
-       <div id="button" style = "display:flex; justify-content: space-between;">
-          <img src="4.png"  align="center" style="width:100px;  padding-left: 10px;padding-top: 0px;"/>
-	  <img src="iitname.png"  style="width:100px;  padding-right: 10px;padding-top: 0px;"/>    
-      </div>
-      <button slot="ar-button" id="ar-button">
-        View in 4D
-    </button>
-     
-      <div id="ar-prompt">
+        </div>
+
+        <!-- Button Area -->
+        <div id="button" style="display: flex; justify-content: space-between;">
+          <img src="4.png" style="width: 100px; padding-left: 10px;"/>
+          <img src="iitname.png" style="width: 100px; padding-right: 10px;"/>
+        </div>
+
+        <button slot="ar-button" id="ar-button">
+          View in 4D
+        </button>
+
+        <div id="ar-prompt">
           <img src="ar_hand_prompt.png">
-        
-      </div>
-      
-    </model-viewer> 
-     <section class="attributiontwo">
-       <p style="background-image: url('black.png')" style="width:60px;height:60px; padding-left: 0px;padding-top: 10px;">
-      
-      <span>
-        
-        <a href="https://varian.widen.net/s/wwyx9dru1f/brachy_catalog_rad10536a_september2019">
-		<img src="Brochure_1.png" class="icon"></a>
-        <a href="https://www.youtube.com/watch?v=rZ7_4vUH15k">
-		<img src="Video_1.png" class="icon"></a>
-        <a href="https://www.varian.com/products/brachytherapy/afterloaders-and-applicators">
-		<img src="web_1.png" class="icon"></a>  
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfRaempuDSCvL9Adi-AAdqqdlyBzLo7s20bddYnmd1HOyapxg/viewform?usp=sf_link">
-		<img src="form_1.png" class="icon"></a>
-      </span>
-	       <style>
-       h5 {
-       text-align: center;
-       margin-top:-5px; 
-       
-       
-       font-size: 9px;
-         }
-          
-   </style>  
-   
-    </section>
-       </div>
+        </div>
+
+      </model-viewer> 
+
+      <!-- Attribution and Links -->
+      <section class="attributiontwo">
+        <span>
+          <a href="https://varian.widen.net/s/wwyx9dru1f/brachy_catalog_rad10536a_september2019">
+            <img src="Brochure_1.png" class="icon">
+          </a>
+          <a href="https://www.youtube.com/watch?v=rZ7_4vUH15k">
+            <img src="Video_1.png" class="icon">
+          </a>
+          <a href="https://www.varian.com/products/brachytherapy/afterloaders-and-applicators">
+            <img src="web_1.png" class="icon">
+          </a>  
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSfRaempuDSCvL9Adi-AAdqqdlyBzLo7s20bddYnmd1HOyapxg/viewform?usp=sf_link">
+            <img src="form_1.png" class="icon">
+          </a>
+        </span>
+      </section>
+    </div>
+
+    <!-- Background Audio -->
+    <audio id="bg-music" src="BG.mp3" loop></audio>
+
     <script src="script.js"></script>
-    <!-- Loads <model-viewer> for browsers: -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
+
+    <!-- Script to autoplay audio after first touch -->
+    <script>
+      const bgMusic = document.getElementById('bg-music');
+
+      // Function to play audio after user interacts
+      function enableAudio() {
+        bgMusic.play().catch((error) => {
+          console.log('Audio play was prevented:', error);
+        });
+        document.body.removeEventListener('click', enableAudio);
+        document.body.removeEventListener('touchstart', enableAudio);
+      }
+
+      // Listen for user interaction
+      document.body.addEventListener('click', enableAudio);
+      document.body.addEventListener('touchstart', enableAudio);
+    </script>
+
   </body>
 </html>
