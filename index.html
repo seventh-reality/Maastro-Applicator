@@ -132,12 +132,8 @@
   <script>
     const bgMusic = document.getElementById('bg-music');
     const modelViewer = document.getElementById('model');
-    const arButton = document.getElementById('ar-button');
   
-    let modelIsLoaded = false;
-    let buttonClicked = false;
-  
-    // Prepare audio
+    // Prepare audio on load
     document.addEventListener('DOMContentLoaded', () => {
       bgMusic.loop = false;
       bgMusic.muted = true;
@@ -145,7 +141,7 @@
       bgMusic.load();
     });
   
-    // Unlock audio on interaction
+    // Unlock audio on first interaction
     function unlockAudio() {
       bgMusic.muted = false;
       bgMusic.play().then(() => {
@@ -162,34 +158,28 @@
     document.addEventListener('click', unlockAudio);
     document.addEventListener('touchstart', unlockAudio);
   
-    // Detect when model is fully loaded
-    modelViewer.addEventListener('load', () => {
-      modelIsLoaded = true;
-      maybePlayMusicWithDelay();
-    });
-  
-    // Handle AR button click
-    arButton.addEventListener('click', () => {
-      buttonClicked = true;
-      alert("AR Button clicked. Background music will play after 10 seconds.");
-      modelViewer.showPoster = false;
-      maybePlayMusicWithDelay();
-    });
-  
-    // Logic to play music if both model is loaded and button is clicked
-    function maybePlayMusicWithDelay() {
-      if (modelIsLoaded && buttonClicked) {
+    // Play music after 10s of entering AR mode
+    modelViewer.addEventListener('ar-status', (event) => {
+      if (event.detail.status === 'session-started') {
+        console.log("AR session started. Background music will play in 10 seconds.");
+        
         setTimeout(() => {
           bgMusic.play().then(() => {
-            console.log('Background music started after 10 seconds.');
+            console.log("Background music started after delay.");
           }).catch((error) => {
-            console.error('Error playing music:', error);
+            console.error("Error playing music after AR started:", error);
           });
         }, 10000); // 10 seconds delay
       }
-    }
   
-    // Google Analytics tracking remains the same
+      if (event.detail.status === 'session-ended') {
+        console.log("AR session ended. Stopping music.");
+        bgMusic.pause();
+        bgMusic.currentTime = 0;
+      }
+    });
+  
+    // Optional: Analytics tracking
     modelViewer.addEventListener('camera-change', () => {
       gtag('event', 'model_camera_changed', {
         event_category: '3D Model',
@@ -212,22 +202,8 @@
         value: 1
       });
     });
-  
-    modelViewer.addEventListener('ar-status', (event) => {
-      if (event.detail.status === 'session-started') {
-        gtag('event', 'ar_session_started', {
-          event_category: 'AR',
-          event_label: 'AR View started'
-        });
-      }
-      if (event.detail.status === 'session-ended') {
-        gtag('event', 'ar_session_ended', {
-          event_category: 'AR',
-          event_label: 'AR View ended'
-        });
-      }
-    });
   </script>
+  
   
 </body>
 
