@@ -105,33 +105,48 @@
   const modelViewer = document.getElementById('model');
   const arButton = document.getElementById('ar-button');
 
+  // Wait for DOM ready
   document.addEventListener('DOMContentLoaded', () => {
-    bgMusic.loop = false; // Ensure no looping
+    bgMusic.loop = false; // Play only once
     bgMusic.muted = true; // Start muted
+    bgMusic.preload = "auto"; // Preload for better performance
+    bgMusic.load(); // Make sure it's loaded
   });
 
-  function enableAudio() {
+  // Unlock audio on user interaction (important for Safari, Chrome)
+  function unlockAudio() {
     bgMusic.muted = false;
-    document.removeEventListener('click', enableAudio);
-    document.removeEventListener('touchstart', enableAudio);
+    // Play a silent frame just to unlock audio system (only for Safari workaround)
+    bgMusic.play().then(() => {
+      bgMusic.pause();
+      bgMusic.currentTime = 0;
+    }).catch((e) => {
+      console.log('Silent unlock play failed:', e);
+    });
+
+    document.removeEventListener('click', unlockAudio);
+    document.removeEventListener('touchstart', unlockAudio);
   }
 
-  document.addEventListener('click', enableAudio);
-  document.addEventListener('touchstart', enableAudio);
+  document.addEventListener('click', unlockAudio);
+  document.addEventListener('touchstart', unlockAudio);
 
   arButton.addEventListener('click', () => {
-    console.log("AR Button clicked, will play BG.mp3 after 20 seconds.");
+    console.log("AR Button clicked, will play BG.mp3 after 10 seconds.");
+
     bgMusic.pause();
     bgMusic.currentTime = 0;
 
     setTimeout(() => {
-      bgMusic.play().catch((error) => {
-        console.log('Play failed after 20s delay:', error);
+      bgMusic.play().then(() => {
+        console.log('Background music started after delay.');
+      }).catch((error) => {
+        console.log('Error trying to play after delay:', error);
       });
-    }, 10000); // 20,000 milliseconds = 20 seconds
+    }, 10000); // 10 seconds delay
   });
 
-  // Model Interaction Tracking
+  // Model Interaction Tracking (same as before)
   modelViewer.addEventListener('camera-change', () => {
     gtag('event', 'model_camera_changed', {
       event_category: '3D Model',
@@ -139,7 +154,7 @@
     });
   });
 
-  modelViewer.addEventListener('click', (event) => {
+  modelViewer.addEventListener('click', () => {
     gtag('event', 'model_clicked', {
       event_category: '3D Model',
       event_label: 'User clicked on model',
@@ -147,7 +162,7 @@
     });
   });
 
-  modelViewer.addEventListener('touchstart', (event) => {
+  modelViewer.addEventListener('touchstart', () => {
     gtag('event', 'model_touched', {
       event_category: '3D Model',
       event_label: 'User touched model',
