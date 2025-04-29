@@ -123,7 +123,7 @@
   </div>
 
   <!-- Background Music -->
-  <audio id="bg-music" src="BG.mp3" muted></audio>
+  <audio id="bg-music" src="BG.mp3" preload="auto" muted></audio>
 
   <!-- Scripts -->
   <script src="script.js"></script>
@@ -133,22 +133,20 @@
     const bgMusic = document.getElementById('bg-music');
     const modelViewer = document.getElementById('model');
   
-    // Prepare audio on load
-    document.addEventListener('DOMContentLoaded', () => {
-      bgMusic.loop = false;
-      bgMusic.muted = true;
-      bgMusic.preload = "auto";
-      bgMusic.load();
-    });
+    let audioUnlocked = false;
   
-    // Unlock audio on first interaction
+    // STEP 1: Unlock audio on first user interaction
     function unlockAudio() {
+      if (audioUnlocked) return;
+  
       bgMusic.muted = false;
       bgMusic.play().then(() => {
         bgMusic.pause();
         bgMusic.currentTime = 0;
+        audioUnlocked = true;
+        console.log('Audio unlocked.');
       }).catch((e) => {
-        console.log('Silent unlock play failed:', e);
+        console.warn('Audio unlock failed:', e);
       });
   
       document.removeEventListener('click', unlockAudio);
@@ -158,51 +156,34 @@
     document.addEventListener('click', unlockAudio);
     document.addEventListener('touchstart', unlockAudio);
   
-    // Play music after 10s of entering AR mode
+    // STEP 2: Handle AR session start — play music 3s after entering AR
     modelViewer.addEventListener('ar-status', (event) => {
       if (event.detail.status === 'session-started') {
-        console.log("AR session started. Background music will play in 10 seconds.");
-        
+        console.log("AR session started.");
+  
+        if (!audioUnlocked) {
+          console.warn("Audio not unlocked yet — user interaction may be missing.");
+          return;
+        }
+  
         setTimeout(() => {
           bgMusic.play().then(() => {
-            console.log("Background music started after delay.");
+            console.log("Background music started after 3-second delay.");
           }).catch((error) => {
-            console.error("Error playing music after AR started:", error);
+            console.error("Error playing music:", error);
           });
-        }, 10000); // 10 seconds delay
+        }, 3000); // 3 seconds
       }
   
+      // STEP 3: Stop music on session end
       if (event.detail.status === 'session-ended') {
         console.log("AR session ended. Stopping music.");
         bgMusic.pause();
         bgMusic.currentTime = 0;
       }
     });
-  
-    // Optional: Analytics tracking
-    modelViewer.addEventListener('camera-change', () => {
-      gtag('event', 'model_camera_changed', {
-        event_category: '3D Model',
-        event_label: 'User moved/rotated/zoomed model'
-      });
-    });
-  
-    modelViewer.addEventListener('click', () => {
-      gtag('event', 'model_clicked', {
-        event_category: '3D Model',
-        event_label: 'User clicked on model',
-        value: 1
-      });
-    });
-  
-    modelViewer.addEventListener('touchstart', () => {
-      gtag('event', 'model_touched', {
-        event_category: '3D Model',
-        event_label: 'User touched model',
-        value: 1
-      });
-    });
   </script>
+  
   
   
 </body>
