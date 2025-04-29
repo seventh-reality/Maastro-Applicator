@@ -101,7 +101,9 @@
       </div>
 
     </model-viewer>
-
+    <!-- Background Music -->
+    <audio id="bg-music" src="BG.mp3" preload="auto" muted></audio>
+    
     <section class="attributiontwo">
       <span>
         <a href="https://varian.widen.net/s/wwyx9dru1f/brachy_catalog_rad10536a_september2019">
@@ -122,8 +124,7 @@
 
   </div>
 
-  <!-- Background Music -->
-  <audio id="bg-music" src="BG.mp3" preload="auto" muted></audio>
+ 
 
   <!-- Scripts -->
   <script src="script.js"></script>
@@ -132,22 +133,24 @@
   <script>
     const bgMusic = document.getElementById('bg-music');
     const modelViewer = document.getElementById('model');
-  
     let audioUnlocked = false;
   
-    // STEP 1: Unlock audio on first user interaction
+    // STEP 1: Unlock audio on any user gesture (Safari/iOS requirement)
     function unlockAudio() {
       if (audioUnlocked) return;
   
       bgMusic.muted = false;
-      bgMusic.play().then(() => {
-        bgMusic.pause();
-        bgMusic.currentTime = 0;
-        audioUnlocked = true;
-        console.log('Audio unlocked.');
-      }).catch((e) => {
-        console.warn('Audio unlock failed:', e);
-      });
+  
+      bgMusic.play()
+        .then(() => {
+          bgMusic.pause();
+          bgMusic.currentTime = 0;
+          audioUnlocked = true;
+          console.log('Audio unlocked ✅');
+        })
+        .catch((e) => {
+          console.warn('Audio unlock failed:', e);
+        });
   
       document.removeEventListener('click', unlockAudio);
       document.removeEventListener('touchstart', unlockAudio);
@@ -156,33 +159,37 @@
     document.addEventListener('click', unlockAudio);
     document.addEventListener('touchstart', unlockAudio);
   
-    // STEP 2: Handle AR session start — play music 3s after entering AR
+    // STEP 2: Wait for AR session to start
     modelViewer.addEventListener('ar-status', (event) => {
       if (event.detail.status === 'session-started') {
-        console.log("AR session started.");
+        console.log("✅ AR session started");
   
+        // SAFETY: Only proceed if audio was unlocked by user
         if (!audioUnlocked) {
-          console.warn("Audio not unlocked yet — user interaction may be missing.");
+          console.warn("⚠️ Audio not unlocked — music won't play.");
           return;
         }
   
+        // STEP 3: Play music after 3s inside AR
         setTimeout(() => {
-          bgMusic.play().then(() => {
-            console.log("Background music started after 3-second delay.");
-          }).catch((error) => {
-            console.error("Error playing music:", error);
-          });
-        }, 3000); // 3 seconds
+          bgMusic.play()
+            .then(() => {
+              console.log("🎵 Background music started after 3-second AR delay.");
+            })
+            .catch((error) => {
+              console.error("❌ Error playing music:", error);
+            });
+        }, 3000); // Delay in milliseconds
       }
   
-      // STEP 3: Stop music on session end
       if (event.detail.status === 'session-ended') {
-        console.log("AR session ended. Stopping music.");
+        console.log("⛔️ AR session ended — stopping music.");
         bgMusic.pause();
         bgMusic.currentTime = 0;
       }
     });
   </script>
+  
   
   
   
