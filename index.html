@@ -94,7 +94,7 @@
 </div>
 
 <!-- Background Music -->
-<audio id="bg-music" src="BG.mp3" muted></audio>
+<audio id="bg-music" src="BG.mp3" preload="auto" playsinline></audio>
 
 <!-- Scripts -->
 <script src="script.js"></script>
@@ -105,25 +105,20 @@
   const modelViewer = document.getElementById('model');
   const arButton = document.getElementById('ar-button');
 
-  // Wait for DOM ready
-  document.addEventListener('DOMContentLoaded', () => {
-    bgMusic.loop = false; // Play only once
-    bgMusic.muted = true; // Start muted
-    bgMusic.preload = "auto"; // Preload for better performance
-    bgMusic.load(); // Make sure it's loaded
-  });
-
-  // Unlock audio on user interaction (important for Safari, Chrome)
+  // Ensure audio can play on mobile by unlocking it on user gesture
   function unlockAudio() {
-    bgMusic.muted = false;
-    // Play a silent frame just to unlock audio system (only for Safari workaround)
-    bgMusic.play().then(() => {
-      bgMusic.pause();
-      bgMusic.currentTime = 0;
-    }).catch((e) => {
-      console.log('Silent unlock play failed:', e);
-    });
+    if (bgMusic.paused) {
+      bgMusic.muted = false;
+      bgMusic.play().then(() => {
+        bgMusic.pause();
+        bgMusic.currentTime = 0;
+        console.log('Audio unlocked successfully.');
+      }).catch((e) => {
+        console.log('Audio unlock failed:', e);
+      });
+    }
 
+    // Remove event listeners after unlocking
     document.removeEventListener('click', unlockAudio);
     document.removeEventListener('touchstart', unlockAudio);
   }
@@ -131,22 +126,24 @@
   document.addEventListener('click', unlockAudio);
   document.addEventListener('touchstart', unlockAudio);
 
+  // Play background music after AR button is clicked and delay of 10 seconds
   arButton.addEventListener('click', () => {
-    console.log("AR Button clicked, will play BG.mp3 after 10 seconds.");
+    console.log("AR Button clicked, scheduling BG.mp3 after 10 seconds.");
 
     bgMusic.pause();
     bgMusic.currentTime = 0;
 
     setTimeout(() => {
+      bgMusic.muted = false;
       bgMusic.play().then(() => {
-        console.log('Background music started after delay.');
+        console.log('BG.mp3 is now playing.');
       }).catch((error) => {
-        console.log('Error trying to play after delay:', error);
+        console.log('Failed to play BG.mp3:', error);
       });
-    }, 10000); // 10 seconds delay
+    }, 10000); // 10 seconds
   });
 
-  // Model Interaction Tracking (same as before)
+  // Google Analytics tracking
   modelViewer.addEventListener('camera-change', () => {
     gtag('event', 'model_camera_changed', {
       event_category: '3D Model',
@@ -185,6 +182,7 @@
     }
   });
 </script>
+
 
 
 
