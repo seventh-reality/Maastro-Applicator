@@ -132,16 +132,16 @@
   document.addEventListener('touchstart', unlockAudio);
 
   arButton.addEventListener('click', () => {
-    console.log("AR Button clicked, will play BG.mp3 after 10 seconds.");
+    alert("AR Button clicked, will play BG.mp3 after 10 seconds.");
 
     bgMusic.pause();
     bgMusic.currentTime = 0;
 
     setTimeout(() => {
       bgMusic.play().then(() => {
-        console.log('Background music started after delay.');
+        alert('Background music started after delay.');
       }).catch((error) => {
-        console.log('Error trying to play after delay:', error);
+        alert('Error trying to play after delay:', error);
       });
     }, 10000); // 10 seconds delay
   });
