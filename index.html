@@ -43,18 +43,18 @@
 <body>
 
 <div id="card">
-  <model-viewer
+  <model-viewer 
     id="model"
-    src="Maastro.glb"
-    ios-src="Maastro.usdz"
-    ar
-    ar-modes="webxr scene-viewer quick-look"
-    camera-controls
-    poster="loading.gif"
-    shadow-intensity="0.88"
-    shadow-softness="1"
+    src="Maastro.glb" 
+    ios-src="Maastro.usdz" 
+    ar 
+    ar-modes="webxr scene-viewer quick-look" 
+    camera-controls 
+    poster="loading.gif"  
+    shadow-intensity="0.88" 
+    shadow-softness="1" 
     exposure="1">
-    
+
     <div class="progress-bar hide" slot="progress-bar">
       <div class="update-bar"></div>
     </div>
@@ -90,10 +90,11 @@
       </a>
     </span>
   </section>
+
 </div>
 
 <!-- Background Music -->
-<audio id="intro-music" src="intro.mp3" preload="auto" autoplay muted></audio>
+<audio id="intro-music" src="intro.mp3" autoplay muted preload="auto"></audio>
 <audio id="bg-music" src="BG.mp3" muted preload="auto"></audio>
 
 <!-- Scripts -->
@@ -102,124 +103,97 @@
 
 <script>
 const introMusic = document.getElementById('intro-music');
-  const bgMusic = document.getElementById('bg-music');
-  const modelViewer = document.getElementById('model');
-  const arButton = document.getElementById('ar-button');
+const bgMusic = document.getElementById('bg-music');
+const modelViewer = document.getElementById('model');
+const arButton = document.getElementById('ar-button');
 
-  // Autoplay intro music when page loads
-  document.addEventListener('DOMContentLoaded', () => {
-    // First try to play with muted (which browsers allow)
-    introMusic.muted = true;
-    introMusic.loop = false;
-    bgMusic.loop = false;
-
-    const playPromise = introMusic.play();
-    
-    if (playPromise !== undefined) {
-      playPromise.then(() => {
-        // Audio is playing, now try to unmute
-        setTimeout(() => {
-          introMusic.muted = false;
-        }, 1000);
-      }).catch((e) => {
-        console.warn('Autoplay blocked by browser:', e);
-        // Show a button to let user start audio
-        showAudioPrompt();
-      });
-    }
+// Ensure intro music plays muted immediately
+document.addEventListener('DOMContentLoaded', () => {
+  introMusic.loop = false;
+  bgMusic.loop = false;
+  introMusic.play().catch((e) => {
+    console.log('Intro music autoplay failed, waiting for user interaction.', e);
   });
+});
 
-  // Function to show a prompt allowing user to start audio
-  function showAudioPrompt() {
-    const prompt = document.createElement('div');
-    prompt.style.position = 'fixed';
-    prompt.style.bottom = '20px';
-    prompt.style.left = '0';
-    prompt.style.right = '0';
-    prompt.style.textAlign = 'center';
-    prompt.style.zIndex = '1000';
-    prompt.innerHTML = `
-      <button style="
-        background: #0078d4;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 20px;
-        font-size: 16px;
-        cursor: pointer;
-      ">
-        Click to enable audio
-      </button>
-    `;
-    document.body.appendChild(prompt);
-    
-    prompt.querySelector('button').addEventListener('click', () => {
-      introMusic.play().then(() => {
-        prompt.remove();
-      }).catch(e => {
-        console.warn('Still blocked:', e);
-      });
+// Unlock and unmute audio on first user interaction (Safari/Chrome policy)
+function unlockAudio() {
+  if (introMusic.muted) {
+    introMusic.muted = false;
+    introMusic.play().catch((e) => {
+      console.log('Intro play failed after unlock:', e);
     });
   }
+  if (bgMusic.muted) {
+    bgMusic.muted = false;
+  }
+  document.removeEventListener('click', unlockAudio);
+  document.removeEventListener('touchstart', unlockAudio);
+}
 
-  // Rest of your existing AR button and analytics code...
-  arButton.addEventListener('click', () => {
-    console.log("AR Button clicked: stopping intro.mp3 and starting bg.mp3 after 10s.");
+document.addEventListener('click', unlockAudio);
+document.addEventListener('touchstart', unlockAudio);
 
-    introMusic.pause();
-    introMusic.currentTime = 0;
+// When View in 4D button is clicked
+arButton.addEventListener('click', () => {
+  console.log("AR Button clicked: stopping intro.mp3 and starting bg.mp3 after 10s.");
 
-    bgMusic.pause();
-    bgMusic.currentTime = 0;
+  // Stop intro music immediately
+  introMusic.pause();
+  introMusic.currentTime = 0;
 
-    setTimeout(() => {
-      bgMusic.muted = false;
-      bgMusic.play().then(() => {
-        console.log('Background music started.');
-      }).catch((error) => {
-        console.log('Failed to start background music:', error);
-      });
-    }, 10000);
-  });
+  // Reset bg music
+  bgMusic.pause();
+  bgMusic.currentTime = 0;
 
-  // Analytics for model interactions
-  modelViewer.addEventListener('camera-change', () => {
-    gtag('event', 'model_camera_changed', {
-      event_category: '3D Model',
-      event_label: 'User moved/rotated/zoomed model'
+  // Play bg music after 10 seconds
+  setTimeout(() => {
+    bgMusic.play().then(() => {
+      console.log('Background music started.');
+    }).catch((error) => {
+      console.log('Failed to start background music:', error);
     });
-  });
+  }, 10000);
+});
 
-  modelViewer.addEventListener('click', () => {
-    gtag('event', 'model_clicked', {
-      event_category: '3D Model',
-      event_label: 'User clicked on model',
-      value: 1
+// Model Interaction Tracking
+modelViewer.addEventListener('camera-change', () => {
+  gtag('event', 'model_camera_changed', {
+    event_category: '3D Model',
+    event_label: 'User moved/rotated/zoomed model'
+  });
+});
+
+modelViewer.addEventListener('click', () => {
+  gtag('event', 'model_clicked', {
+    event_category: '3D Model',
+    event_label: 'User clicked on model',
+    value: 1
+  });
+});
+
+modelViewer.addEventListener('touchstart', () => {
+  gtag('event', 'model_touched', {
+    event_category: '3D Model',
+    event_label: 'User touched model',
+    value: 1
+  });
+});
+
+modelViewer.addEventListener('ar-status', (event) => {
+  if (event.detail.status === 'session-started') {
+    gtag('event', 'ar_session_started', {
+      event_category: 'AR',
+      event_label: 'AR View started'
     });
-  });
-
-  modelViewer.addEventListener('touchstart', () => {
-    gtag('event', 'model_touched', {
-      event_category: '3D Model',
-      event_label: 'User touched model',
-      value: 1
+  }
+  if (event.detail.status === 'session-ended') {
+    gtag('event', 'ar_session_ended', {
+      event_category: 'AR',
+      event_label: 'AR View ended'
     });
-  });
-
-  modelViewer.addEventListener('ar-status', (event) => {
-    if (event.detail.status === 'session-started') {
-      gtag('event', 'ar_session_started', {
-        event_category: 'AR',
-        event_label: 'AR View started'
-      });
-    }
-    if (event.detail.status === 'session-ended') {
-      gtag('event', 'ar_session_ended', {
-        event_category: 'AR',
-        event_label: 'AR View ended'
-      });
-    }
-  });
+  }
+});
 </script>
 
 </body>
