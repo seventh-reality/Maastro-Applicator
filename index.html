@@ -24,7 +24,7 @@
   <!-- Microsoft Clarity -->
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)}
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
         t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "rb8f137aiv");
@@ -61,7 +61,7 @@
 
     <div id="button" style="display:flex; justify-content: space-between;">
       <img src="4.png" style="width:100px; padding-left:10px;"/>
-      <img src="iitname.png" style="width:155px; padding-right:10px;"/>
+      <img src="iitname.png" style="width:100px; padding-right:10px;"/>
     </div>
 
     <button slot="ar-button" id="ar-button">
@@ -76,7 +76,7 @@
 
   <section class="attributiontwo">
     <span>
-      <a href="https://drive.google.com/file/d/1BlhfiD6EbNsY-tgQU0PHzL8xfaJmem-n/view?usp=sharing">
+      <a href="https://varian.widen.net/s/wwyx9dru1f/brachy_catalog_rad10536a_september2019">
         <img src="Brochure_1.png" class="icon">
       </a>
       <a href="https://vimeo.com/1059697212">
@@ -90,97 +90,103 @@
       </a>
     </span>
   </section>
+
 </div>
 
 <!-- Background Music -->
-<audio id="intro-music" src="intro.mp3" autoplay muted playsinline preload="auto" loop></audio>
-<audio id="bg-music" src="BG.mp3" muted playsinline preload="auto"></audio> <!-- loop removed -->
+<audio id="bg-music" src="BG.mp3" muted></audio>
 
 <!-- Scripts -->
+<script src="script.js"></script>
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
 
 <script>
-const introMusic = document.getElementById('intro-music');
-const bgMusic = document.getElementById('bg-music');
-const arButton = document.getElementById('ar-button');
-const modelViewer = document.getElementById('model');
+  const bgMusic = document.getElementById('bg-music');
+  const modelViewer = document.getElementById('model');
+  const arButton = document.getElementById('ar-button');
 
-// Play intro music on load (muted)
-window.addEventListener('load', () => {
-  introMusic.play().catch(err => console.log('Intro autoplay blocked:', err));
-});
+  // Wait for DOM ready
+  document.addEventListener('DOMContentLoaded', () => {
+    bgMusic.loop = false; // Play only once
+    bgMusic.muted = true; // Start muted
+    bgMusic.preload = "auto"; // Preload for better performance
+    bgMusic.load(); // Make sure it's loaded
+  });
 
-// Unlock audio system on any first interaction
-function unlockAudio() {
-  introMusic.muted = false;
-  bgMusic.muted = false;
-
-  introMusic.play().catch(e => console.log("Intro resume error", e));
-  document.removeEventListener('click', unlockAudio);
-  document.removeEventListener('touchstart', unlockAudio);
-}
-
-document.addEventListener('click', unlockAudio);
-document.addEventListener('touchstart', unlockAudio);
-
-// AR Button: Stop intro, delay 10s, then play BG music
-arButton.addEventListener('click', () => {
-  console.log("AR Button clicked. Switching audio...");
-
-  introMusic.pause();
-  introMusic.currentTime = 0;
-
-  bgMusic.pause();
-  bgMusic.currentTime = 0;
-
-  setTimeout(() => {
+  // Unlock audio on user interaction (important for Safari, Chrome)
+  function unlockAudio() {
+    bgMusic.muted = false;
+    // Play a silent frame just to unlock audio system (only for Safari workaround)
     bgMusic.play().then(() => {
-      console.log("BG music started.");
-    }).catch((err) => {
-      console.log("BG music play failed:", err);
+      bgMusic.pause();
+      bgMusic.currentTime = 0;
+    }).catch((e) => {
+      console.log('Silent unlock play failed:', e);
     });
-  }, 10000);
-});
 
-// Analytics Events
-modelViewer.addEventListener('camera-change', () => {
-  gtag('event', 'model_camera_changed', {
-    event_category: '3D Model',
-    event_label: 'User moved/rotated/zoomed model'
-  });
-});
-
-modelViewer.addEventListener('click', () => {
-  gtag('event', 'model_clicked', {
-    event_category: '3D Model',
-    event_label: 'User clicked on model',
-    value: 1
-  });
-});
-
-modelViewer.addEventListener('touchstart', () => {
-  gtag('event', 'model_touched', {
-    event_category: '3D Model',
-    event_label: 'User touched model',
-    value: 1
-  });
-});
-
-modelViewer.addEventListener('ar-status', (event) => {
-  if (event.detail.status === 'session-started') {
-    gtag('event', 'ar_session_started', {
-      event_category: 'AR',
-      event_label: 'AR View started'
-    });
+    document.removeEventListener('click', unlockAudio);
+    document.removeEventListener('touchstart', unlockAudio);
   }
-  if (event.detail.status === 'session-ended') {
-    gtag('event', 'ar_session_ended', {
-      event_category: 'AR',
-      event_label: 'AR View ended'
+
+  document.addEventListener('click', unlockAudio);
+  document.addEventListener('touchstart', unlockAudio);
+
+  arButton.addEventListener('click', () => {
+    console.log("AR Button clicked, will play BG.mp3 after 10 seconds.");
+
+    bgMusic.pause();
+    bgMusic.currentTime = 0;
+
+    setTimeout(() => {
+      bgMusic.play().then(() => {
+        console.log('Background music started after delay.');
+      }).catch((error) => {
+        console.log('Error trying to play after delay:', error);
+      });
+    }, 10000); // 10 seconds delay
+  });
+
+  // Model Interaction Tracking (same as before)
+  modelViewer.addEventListener('camera-change', () => {
+    gtag('event', 'model_camera_changed', {
+      event_category: '3D Model',
+      event_label: 'User moved/rotated/zoomed model'
     });
-  }
-});
+  });
+
+  modelViewer.addEventListener('click', () => {
+    gtag('event', 'model_clicked', {
+      event_category: '3D Model',
+      event_label: 'User clicked on model',
+      value: 1
+    });
+  });
+
+  modelViewer.addEventListener('touchstart', () => {
+    gtag('event', 'model_touched', {
+      event_category: '3D Model',
+      event_label: 'User touched model',
+      value: 1
+    });
+  });
+
+  modelViewer.addEventListener('ar-status', (event) => {
+    if (event.detail.status === 'session-started') {
+      gtag('event', 'ar_session_started', {
+        event_category: 'AR',
+        event_label: 'AR View started'
+      });
+    }
+    if (event.detail.status === 'session-ended') {
+      gtag('event', 'ar_session_ended', {
+        event_category: 'AR',
+        event_label: 'AR View ended'
+      });
+    }
+  });
 </script>
 
-</body> 
+
+
+</body>
 </html>
