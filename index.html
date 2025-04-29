@@ -112,6 +112,17 @@
     bgMusic.preload = "auto"; // Preload for better performance
     bgMusic.load(); // Make sure it's loaded
   });
+  // Prevent audio pause on tab/browser visibility change
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    // Page became visible again
+    if (bgMusic.paused) {
+      bgMusic.play().catch((err) => {
+        console.log('Could not resume music:', err);
+      });
+    }
+  }
+});
 
   // Unlock audio on user interaction (important for Safari, Chrome)
   function unlockAudio() {
@@ -138,12 +149,16 @@
     bgMusic.currentTime = 0;
 
     setTimeout(() => {
-      bgMusic.play().then(() => {
-        console.log('Background music started after delay.');
-      }).catch((error) => {
-        console.log('Error trying to play after delay:', error);
-      });
-    }, 10000); // 10 seconds delay
+  if (document.visibilityState === 'visible') {
+    bgMusic.play().then(() => {
+      console.log('Background music started after delay.');
+    }).catch((error) => {
+      console.log('Error trying to play after delay:', error);
+    });
+  } else {
+    console.log('Page not visible; delaying audio start.');
+  }
+}, 10000);
   });
 
   // Model Interaction Tracking (same as before)
