@@ -90,43 +90,32 @@
       </a>
     </span>
   </section>
-
 </div>
 
 <!-- Background Music -->
-<audio id="intro-music" src="intro.mp3" autoplay muted playsinline preload="auto"></audio>
-<audio id="bg-music" src="BG.mp3" muted playsinline preload="auto"></audio>
+<audio id="intro-music" src="intro.mp3" autoplay muted playsinline preload="auto" loop></audio>
+<audio id="bg-music" src="BG.mp3" muted playsinline preload="auto" loop></audio>
 
 <!-- Scripts -->
-<script src="script.js"></script>
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
 
 <script>
 const introMusic = document.getElementById('intro-music');
 const bgMusic = document.getElementById('bg-music');
-const modelViewer = document.getElementById('model');
 const arButton = document.getElementById('ar-button');
+const modelViewer = document.getElementById('model');
 
-// Play intro music muted on load
+// Play intro music on load (muted)
 window.addEventListener('load', () => {
-  introMusic.play().catch((e) => {
-    console.log('Autoplay blocked:', e);
-  });
+  introMusic.play().catch(err => console.log('Intro autoplay blocked:', err));
 });
 
-// Unmute on first interaction
+// Unlock audio system on any first interaction
 function unlockAudio() {
-  if (introMusic.muted) {
-    introMusic.muted = false;
-    introMusic.play().catch((e) => {
-      console.log('Play failed after unmuting intro:', e);
-    });
-  }
+  introMusic.muted = false;
+  bgMusic.muted = false;
 
-  if (bgMusic.muted) {
-    bgMusic.muted = false;
-  }
-
+  introMusic.play().catch(e => console.log("Intro resume error", e));
   document.removeEventListener('click', unlockAudio);
   document.removeEventListener('touchstart', unlockAudio);
 }
@@ -134,29 +123,26 @@ function unlockAudio() {
 document.addEventListener('click', unlockAudio);
 document.addEventListener('touchstart', unlockAudio);
 
-// AR Button logic
+// AR Button: Stop intro, delay 10s, then play BG music
 arButton.addEventListener('click', () => {
-  console.log("AR Button clicked: stop intro.mp3, play BG.mp3 after 15s delay.");
+  console.log("AR Button clicked. Switching audio...");
 
-  // Stop intro music immediately
   introMusic.pause();
   introMusic.currentTime = 0;
 
-  // Reset background music
   bgMusic.pause();
   bgMusic.currentTime = 0;
 
-  // Start background music after 15 seconds
   setTimeout(() => {
     bgMusic.play().then(() => {
-      console.log('Background music started.');
-    }).catch((error) => {
-      console.log('Failed to start background music:', error);
+      console.log("BG music started.");
+    }).catch((err) => {
+      console.log("BG music play failed:", err);
     });
   }, 10000);
 });
 
-// Model analytics
+// Analytics Events
 modelViewer.addEventListener('camera-change', () => {
   gtag('event', 'model_camera_changed', {
     event_category: '3D Model',
