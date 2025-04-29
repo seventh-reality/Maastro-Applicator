@@ -101,25 +101,68 @@
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
 
 <script>
-  const introMusic = document.getElementById('intro-music');
+const introMusic = document.getElementById('intro-music');
   const bgMusic = document.getElementById('bg-music');
   const modelViewer = document.getElementById('model');
   const arButton = document.getElementById('ar-button');
 
   // Autoplay intro music when page loads
   document.addEventListener('DOMContentLoaded', () => {
-    introMusic.muted = false; // Unmute audio
+    // First try to play with muted (which browsers allow)
+    introMusic.muted = true;
     introMusic.loop = false;
     bgMusic.loop = false;
 
-    introMusic.play().then(() => {
-      console.log('Intro music started.');
-    }).catch((e) => {
-      console.warn('Autoplay blocked by browser:', e);
-    });
+    const playPromise = introMusic.play();
+    
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        // Audio is playing, now try to unmute
+        setTimeout(() => {
+          introMusic.muted = false;
+        }, 1000);
+      }).catch((e) => {
+        console.warn('Autoplay blocked by browser:', e);
+        // Show a button to let user start audio
+        showAudioPrompt();
+      });
+    }
   });
 
-  // When AR button is clicked
+  // Function to show a prompt allowing user to start audio
+  function showAudioPrompt() {
+    const prompt = document.createElement('div');
+    prompt.style.position = 'fixed';
+    prompt.style.bottom = '20px';
+    prompt.style.left = '0';
+    prompt.style.right = '0';
+    prompt.style.textAlign = 'center';
+    prompt.style.zIndex = '1000';
+    prompt.innerHTML = `
+      <button style="
+        background: #0078d4;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-size: 16px;
+        cursor: pointer;
+      ">
+        Click to enable audio
+      </button>
+    `;
+    document.body.appendChild(prompt);
+    
+    prompt.querySelector('button').addEventListener('click', () => {
+      introMusic.play().then(() => {
+        prompt.remove();
+      }).catch(e => {
+        console.warn('Still blocked:', e);
+      });
+    });
+  }
+
+  // Rest of your existing AR button and analytics code...
   arButton.addEventListener('click', () => {
     console.log("AR Button clicked: stopping intro.mp3 and starting bg.mp3 after 10s.");
 
