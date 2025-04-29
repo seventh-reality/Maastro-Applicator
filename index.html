@@ -94,10 +94,7 @@
 </div>
 
 <!-- Background Music -->
-  <audio autoplay>
-  <source src="intro.mp3" type="audio/mpeg">
-</audio>
-<audio id="intro-music" src="intro.mp3" autoplay></audio>
+<audio id="intro-music" src="intro.mp3" autoplay muted></audio>
 <audio id="bg-music" src="BG.mp3" muted preload="auto"></audio>
 
 <!-- Scripts -->
@@ -110,21 +107,21 @@ const bgMusic = document.getElementById('bg-music');
 const modelViewer = document.getElementById('model');
 const arButton = document.getElementById('ar-button');
 
-// Ensure intro music plays muted immediately
-document.addEventListener('DOMContentLoaded', () => {
+// Play intro music on load
+window.addEventListener('load', () => {
+  introMusic.muted = true; // Start muted
   introMusic.loop = false;
-  bgMusic.loop = false;
   introMusic.play().catch((e) => {
-    console.log('Intro music autoplay failed, waiting for user interaction.', e);
+    console.log('Autoplay blocked:', e);
   });
 });
 
-// Unlock and unmute audio on first user interaction (Safari/Chrome policy)
+// Unmute music after first interaction
 function unlockAudio() {
   if (introMusic.muted) {
     introMusic.muted = false;
     introMusic.play().catch((e) => {
-      console.log('Intro play failed after unlock:', e);
+      console.log('Play failed after unmuting:', e);
     });
   }
   if (bgMusic.muted) {
@@ -137,19 +134,16 @@ function unlockAudio() {
 document.addEventListener('click', unlockAudio);
 document.addEventListener('touchstart', unlockAudio);
 
-// When View in 4D button is clicked
+// Handle "View in 4D" button
 arButton.addEventListener('click', () => {
   console.log("AR Button clicked: stopping intro.mp3 and starting bg.mp3 after 10s.");
 
-  // Stop intro music immediately
   introMusic.pause();
   introMusic.currentTime = 0;
 
-  // Reset bg music
   bgMusic.pause();
   bgMusic.currentTime = 0;
 
-  // Play bg music after 10 seconds
   setTimeout(() => {
     bgMusic.play().then(() => {
       console.log('Background music started.');
