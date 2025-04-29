@@ -24,7 +24,7 @@
   <!-- Microsoft Clarity -->
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)}
         t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "rb8f137aiv");
@@ -94,7 +94,7 @@
 </div>
 
 <!-- Background Music -->
-<audio id="intro-music" src="intro.mp3" preload="auto"></audio>
+<audio id="intro-music" src="intro.mp3" autoplay muted preload="auto"></audio>
 <audio id="bg-music" src="BG.mp3" muted preload="auto"></audio>
 
 <!-- Scripts -->
@@ -102,94 +102,99 @@
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
 
 <script>
-  const introMusic = document.getElementById('intro-music');
-  const bgMusic = document.getElementById('bg-music');
-  const modelViewer = document.getElementById('model');
-  const arButton = document.getElementById('ar-button');
+const introMusic = document.getElementById('intro-music');
+const bgMusic = document.getElementById('bg-music');
+const modelViewer = document.getElementById('model');
+const arButton = document.getElementById('ar-button');
 
-  document.addEventListener('DOMContentLoaded', () => {
-    introMusic.loop = false; // Play intro.mp3 only once
-    bgMusic.loop = false; // Play bg.mp3 only once
-    introMusic.play().catch((e) => {
-      console.log('Intro music play blocked, will wait for user interaction.', e);
-    });
+// Ensure intro music plays muted immediately
+document.addEventListener('DOMContentLoaded', () => {
+  introMusic.loop = false;
+  bgMusic.loop = false;
+  introMusic.play().catch((e) => {
+    console.log('Intro music autoplay failed, waiting for user interaction.', e);
   });
+});
 
-  // Unlock audio on user interaction (Safari and Chrome mobile)
-  function unlockAudio() {
+// Unlock and unmute audio on first user interaction (Safari/Chrome policy)
+function unlockAudio() {
+  if (introMusic.muted) {
+    introMusic.muted = false;
     introMusic.play().catch((e) => {
-      console.log('Intro play failed on unlock:', e);
+      console.log('Intro play failed after unlock:', e);
     });
-    bgMusic.muted = false;
-    document.removeEventListener('click', unlockAudio);
-    document.removeEventListener('touchstart', unlockAudio);
   }
+  if (bgMusic.muted) {
+    bgMusic.muted = false;
+  }
+  document.removeEventListener('click', unlockAudio);
+  document.removeEventListener('touchstart', unlockAudio);
+}
 
-  document.addEventListener('click', unlockAudio);
-  document.addEventListener('touchstart', unlockAudio);
+document.addEventListener('click', unlockAudio);
+document.addEventListener('touchstart', unlockAudio);
 
-  arButton.addEventListener('click', () => {
-    console.log("AR Button clicked, stopping intro.mp3 and scheduling bg.mp3 after 10 seconds.");
+// When View in 4D button is clicked
+arButton.addEventListener('click', () => {
+  console.log("AR Button clicked: stopping intro.mp3 and starting bg.mp3 after 10s.");
 
-    // Stop intro music immediately
-    introMusic.pause();
-    introMusic.currentTime = 0;
+  // Stop intro music immediately
+  introMusic.pause();
+  introMusic.currentTime = 0;
 
-    // Stop and reset bg music in case it's playing
-    bgMusic.pause();
-    bgMusic.currentTime = 0;
+  // Reset bg music
+  bgMusic.pause();
+  bgMusic.currentTime = 0;
 
-    // After 10 seconds, play background music
-    setTimeout(() => {
-      bgMusic.play().then(() => {
-        console.log('Background music started after delay.');
-      }).catch((error) => {
-        console.log('Error playing background music:', error);
-      });
-    }, 10000); // 10 seconds
-  });
-
-  // Model Interaction Tracking (same)
-  modelViewer.addEventListener('camera-change', () => {
-    gtag('event', 'model_camera_changed', {
-      event_category: '3D Model',
-      event_label: 'User moved/rotated/zoomed model'
+  // Play bg music after 10 seconds
+  setTimeout(() => {
+    bgMusic.play().then(() => {
+      console.log('Background music started.');
+    }).catch((error) => {
+      console.log('Failed to start background music:', error);
     });
-  });
+  }, 10000);
+});
 
-  modelViewer.addEventListener('click', () => {
-    gtag('event', 'model_clicked', {
-      event_category: '3D Model',
-      event_label: 'User clicked on model',
-      value: 1
+// Model Interaction Tracking
+modelViewer.addEventListener('camera-change', () => {
+  gtag('event', 'model_camera_changed', {
+    event_category: '3D Model',
+    event_label: 'User moved/rotated/zoomed model'
+  });
+});
+
+modelViewer.addEventListener('click', () => {
+  gtag('event', 'model_clicked', {
+    event_category: '3D Model',
+    event_label: 'User clicked on model',
+    value: 1
+  });
+});
+
+modelViewer.addEventListener('touchstart', () => {
+  gtag('event', 'model_touched', {
+    event_category: '3D Model',
+    event_label: 'User touched model',
+    value: 1
+  });
+});
+
+modelViewer.addEventListener('ar-status', (event) => {
+  if (event.detail.status === 'session-started') {
+    gtag('event', 'ar_session_started', {
+      event_category: 'AR',
+      event_label: 'AR View started'
     });
-  });
-
-  modelViewer.addEventListener('touchstart', () => {
-    gtag('event', 'model_touched', {
-      event_category: '3D Model',
-      event_label: 'User touched model',
-      value: 1
+  }
+  if (event.detail.status === 'session-ended') {
+    gtag('event', 'ar_session_ended', {
+      event_category: 'AR',
+      event_label: 'AR View ended'
     });
-  });
-
-  modelViewer.addEventListener('ar-status', (event) => {
-    if (event.detail.status === 'session-started') {
-      gtag('event', 'ar_session_started', {
-        event_category: 'AR',
-        event_label: 'AR View started'
-      });
-    }
-    if (event.detail.status === 'session-ended') {
-      gtag('event', 'ar_session_ended', {
-        event_category: 'AR',
-        event_label: 'AR View ended'
-      });
-    }
-  });
+  }
+});
 </script>
-
-
 
 </body>
 </html>
