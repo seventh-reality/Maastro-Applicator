@@ -43,18 +43,18 @@
 <body>
 
 <div id="card">
-  <model-viewer 
+  <model-viewer
     id="model"
-    src="Maastro.glb" 
-    ios-src="Maastro.usdz" 
-    ar 
-    ar-modes="webxr scene-viewer quick-look" 
-    camera-controls 
-    poster="loading.gif"  
-    shadow-intensity="0.88" 
-    shadow-softness="1" 
+    src="Maastro.glb"
+    ios-src="Maastro.usdz"
+    ar
+    ar-modes="webxr scene-viewer quick-look"
+    camera-controls
+    poster="loading.gif"
+    shadow-intensity="0.88"
+    shadow-softness="1"
     exposure="1">
-
+    
     <div class="progress-bar hide" slot="progress-bar">
       <div class="update-bar"></div>
     </div>
@@ -90,11 +90,10 @@
       </a>
     </span>
   </section>
-
 </div>
 
 <!-- Background Music -->
-<audio id="intro-music" src="intro.mp3" autoplay ="auto"></audio>
+<audio id="intro-music" src="intro.mp3" autoplay muted preload="auto"></audio>
 <audio id="bg-music" src="BG.mp3" muted preload="auto"></audio>
 
 <!-- Scripts -->
@@ -107,7 +106,7 @@ const bgMusic = document.getElementById('bg-music');
 const modelViewer = document.getElementById('model');
 const arButton = document.getElementById('ar-button');
 
-// Ensure intro music plays muted immediately
+// Play intro music immediately (muted) when page loads
 document.addEventListener('DOMContentLoaded', () => {
   introMusic.loop = false;
   bgMusic.loop = false;
@@ -116,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// Unlock and unmute audio on first user interaction (Safari/Chrome policy)
+// Unlock and unmute audio on first user interaction
 function unlockAudio() {
   if (introMusic.muted) {
     introMusic.muted = false;
