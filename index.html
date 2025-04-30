@@ -93,7 +93,7 @@
 </div>
 
 <!-- Background Music -->
-<audio id="intro-audio" src="intro.mp3" preload="auto"></audio>    
+<audio id="intro-audio" src="intro.mp3" preload="auto" loop="false"></audio>
 
 <!-- Scripts -->
 <script src="script.js"></script>
@@ -135,8 +135,18 @@
       value: 1
     });
 
+   let introPlayed = false;
+
+function playIntro() {
+  if (!introPlayed) {
+    introPlayed = true;
     introAudio.currentTime = 0;
     introAudio.play().catch(err => console.log('Intro play error:', err));
+  }
+}
+
+modelViewer.addEventListener('touchstart', playIntro);
+modelViewer.addEventListener('click', playIntro);
   });
 
   modelViewer.addEventListener('click', () => {
