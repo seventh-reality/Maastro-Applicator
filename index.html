@@ -34,7 +34,7 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-11NF2EFQ2Q"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag(){ dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-11NF2EFQ2Q');
   </script>
@@ -90,11 +90,10 @@
       </a>
     </span>
   </section>
-
 </div>
 
 <!-- Background Music -->
-<audio id="bg-music" src="BG.mp3" muted></audio>
+<audio id="bg-music" src="BG.mp3" muted preload="auto"></audio>
 
 <!-- Scripts -->
 <script src="script.js"></script>
@@ -105,24 +104,13 @@
   const modelViewer = document.getElementById('model');
   const arButton = document.getElementById('ar-button');
 
-  // Wait for DOM ready
-  document.addEventListener('DOMContentLoaded', () => {
-    bgMusic.loop = false; // Play only once
-    bgMusic.muted = true; // Start muted
-    bgMusic.preload = "auto"; // Preload for better performance
-    bgMusic.load(); // Make sure it's loaded
-  });
-
-  // Unlock audio on user interaction (important for Safari, Chrome)
+  // Unlock audio on first user interaction
   function unlockAudio() {
     bgMusic.muted = false;
-    // Play a silent frame just to unlock audio system (only for Safari workaround)
     bgMusic.play().then(() => {
       bgMusic.pause();
       bgMusic.currentTime = 0;
-    }).catch((e) => {
-      console.log('Silent unlock play failed:', e);
-    });
+    }).catch((e) => console.log('Audio unlock error:', e));
 
     document.removeEventListener('click', unlockAudio);
     document.removeEventListener('touchstart', unlockAudio);
@@ -131,22 +119,36 @@
   document.addEventListener('click', unlockAudio);
   document.addEventListener('touchstart', unlockAudio);
 
-  arButton.addEventListener('click', () => {
-    console.log("AR Button clicked, will play BG.mp3 after 10 seconds.");
-
-    bgMusic.pause();
-    bgMusic.currentTime = 0;
-
-    setTimeout(() => {
-      bgMusic.play().then(() => {
-        console.log('Background music started after delay.');
-      }).catch((error) => {
-        console.log('Error trying to play after delay:', error);
+  // Track AR session status and play music after delay when session starts
+  modelViewer.addEventListener('ar-status', (event) => {
+    if (event.detail.status === 'session-started') {
+      gtag('event', 'ar_session_started', {
+        event_category: 'AR',
+        event_label: 'AR View started'
       });
-    }, 10000); // 10 seconds delay
+
+      // Delay audio play by 10 seconds
+      setTimeout(() => {
+        bgMusic.play().then(() => {
+          console.log('Background music started after AR session.');
+        }).catch((error) => {
+          console.log('Error playing background music:', error);
+        });
+      }, 8000);
+    }
+
+    if (event.detail.status === 'session-ended') {
+      gtag('event', 'ar_session_ended', {
+        event_category: 'AR',
+        event_label: 'AR View ended'
+      });
+
+      bgMusic.pause();
+      bgMusic.currentTime = 0;
+    }
   });
 
-  // Model Interaction Tracking (same as before)
+  // Analytics for model interactions
   modelViewer.addEventListener('camera-change', () => {
     gtag('event', 'model_camera_changed', {
       event_category: '3D Model',
@@ -169,24 +171,7 @@
       value: 1
     });
   });
-
-  modelViewer.addEventListener('ar-status', (event) => {
-    if (event.detail.status === 'session-started') {
-      gtag('event', 'ar_session_started', {
-        event_category: 'AR',
-        event_label: 'AR View started'
-      });
-    }
-    if (event.detail.status === 'session-ended') {
-      gtag('event', 'ar_session_ended', {
-        event_category: 'AR',
-        event_label: 'AR View ended'
-      });
-    }
-  });
 </script>
-
-
 
 </body>
 </html>
