@@ -99,11 +99,7 @@
       <div id="ar-prompt">
         <img src="ar_hand_prompt.png">
       </div>
-
-    </model-viewer>
-    <!-- Background Music -->
-    <audio id="bg-music" src="BG.mp3" preload="auto" muted></audio>
-    
+    </model-viewer>   
     <section class="attributiontwo">
       <span>
         <a href="https://varian.widen.net/s/wwyx9dru1f/brachy_catalog_rad10536a_september2019">
@@ -121,77 +117,10 @@
         </a>
       </span>
     </section>
-
   </div>
-
- 
-
   <!-- Scripts -->
   <script src="script.js"></script>
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
-
-  <script>
-    const bgMusic = document.getElementById('bg-music');
-    const modelViewer = document.getElementById('model');
-    let audioUnlocked = false;
-  
-    // STEP 1: Unlock audio on any user gesture (Safari/iOS requirement)
-    function unlockAudio() {
-      if (audioUnlocked) return;
-  
-      bgMusic.muted = false;
-  
-      bgMusic.play()
-        .then(() => {
-          bgMusic.pause();
-          bgMusic.currentTime = 0;
-          audioUnlocked = true;
-          console.log('Audio unlocked ✅');
-        })
-        .catch((e) => {
-          console.warn('Audio unlock failed:', e);
-        });
-  
-      document.removeEventListener('click', unlockAudio);
-      document.removeEventListener('touchstart', unlockAudio);
-    }
-  
-    document.addEventListener('click', unlockAudio);
-    document.addEventListener('touchstart', unlockAudio);
-  
-    // STEP 2: Wait for AR session to start
-    modelViewer.addEventListener('ar-status', (event) => {
-      if (event.detail.status === 'session-started') {
-        console.log("✅ AR session started");
-  
-        // SAFETY: Only proceed if audio was unlocked by user
-        if (!audioUnlocked) {
-          console.warn("⚠️ Audio not unlocked — music won't play.");
-          return;
-        }
-  
-        // STEP 3: Play music after 3s inside AR
-        setTimeout(() => {
-          bgMusic.play()
-            .then(() => {
-              console.log("🎵 Background music started after 3-second AR delay.");
-            })
-            .catch((error) => {
-              console.error("❌ Error playing music:", error);
-            });
-        }, 1000); // Delay in milliseconds
-      }
-  
-      if (event.detail.status === 'session-ended') {
-        console.log("⛔️ AR session ended — stopping music.");
-        bgMusic.pause();
-        bgMusic.currentTime = 0;
-      }
-    });
-  </script>
-  
-  
-  
   
 </body>
 
